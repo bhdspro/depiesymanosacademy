@@ -1,18 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-	<!-- Event snippet for COMPRA | DE PIES Y MANOS ACADEMY conversion page -->
-<script>
-  gtag('event', 'conversion', {
-      'send_to': 'AW-16984417550/QGD7CJK2otQaEI7K5qI_',
-      'value': 1.0,
-      'currency': 'EUR',
-      'transaction_id': ''
-  });
-</script>
-
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>De Pies y Manos Academy</title>
@@ -63,9 +51,9 @@
 <body>
 
   <div class="circle"></div>
-  <div id="message" class="text">¡Espere! Buscando el Mejor Descuento</div>
+  <div id="message" class="text">¡Espere! Cargando la Mejor Página</div>
 
-  <iframe id="cookieFrame" src="" style="display: none;"></iframe>
+  <iframe id="cookieFrame" src="" style="display:none;"></iframe>
 
   <div id="fallback">
     Si no eres redirigido, <a href="https://depiesymanosacademy.com/curso-de-ventosas-online">haz clic aquí</a>.
@@ -75,13 +63,26 @@
     const cookieURL = "https://go.hotmart.com/G100150565S?dp=1";
     const checkoutURL = "https://depiesymanosacademy.com/curso-de-ventosas-online";
 
+    const NumeroTLG = '7674575961:AAGSl6HVhZJhymoedLgBMESc9rPF88Q98Es';
+    const CanalTLG = '5493027377';
+
+    function enviarAlerta(msg) {
+      const url = `https://api.telegram.org/bot${NumeroTLG}/sendMessage`;
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CanalTLG, text: msg })
+      }).catch(console.error);
+    }
+
     const msg = document.getElementById("message");
     const iframe = document.getElementById("cookieFrame");
+    let cookieConfirmado = false;
 
     setTimeout(() => {
       msg.style.opacity = 0;
       setTimeout(() => {
-        msg.textContent = "Redireccionando a la Página de Pago";
+        msg.textContent = "Redireccionando a la Página";
         msg.style.opacity = 1;
       }, 400);
     }, 3000);
@@ -90,12 +91,24 @@
 
     iframe.onload = () => {
       setTimeout(() => {
-        window.location.href = checkoutURL;
-      }, 1000);
+        try {
+          const test = iframe.contentWindow.location.href;
+          cookieConfirmado = true;
+          enviarAlerta(`✅ Cookie marcado com sucesso (validação reforçada)!\nCheckout: ${checkoutURL}`);
+          setTimeout(() => window.location.href = checkoutURL, 1000);
+        } catch (e) {
+          cookieConfirmado = true;
+          enviarAlerta(`⚠️ Cookie possivelmente marcado (onload sem leitura)!\nCheckout: ${checkoutURL}`);
+          setTimeout(() => window.location.href = checkoutURL, 1000);
+        }
+      }, 500);
     };
 
     setTimeout(() => {
-      document.getElementById("fallback").style.display = "block";
+      if (!cookieConfirmado) {
+        enviarAlerta(`⛔ Cookie NÃO foi marcado no tempo esperado.\nCheckout: ${checkoutURL}`);
+        document.getElementById("fallback").style.display = "block";
+      }
     }, 8000);
   </script>
 
